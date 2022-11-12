@@ -1,4 +1,5 @@
-﻿using NLog.Fluent;
+﻿using ConsoleProject.Model;
+using NLog.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace QuickProject.Logic
                     Console.WriteLine("Backend");
                     Console.WriteLine("\t1. Create token --> if have time will move all this logic to web API with token authen");
                     Console.WriteLine("\t2. Create Account");
+                    Console.WriteLine("\t\t20. View all User");
+                    Console.WriteLine("\t\t21. View all Profile");
                     Console.WriteLine("\t3. Depoist");
                     Console.WriteLine("\t4. Transfer");
                     Console.WriteLine("\tX. Exit");
@@ -35,7 +38,7 @@ namespace QuickProject.Logic
 
                     SwitchCaseMenu(szIn);
 
-                    Console.Clear();
+                    //Console.Clear();
                 }
             }
             catch (Exception ex)
@@ -53,10 +56,19 @@ namespace QuickProject.Logic
                 log.AppendLog(szTxt);
                 switch (szIn)
                 {
-                    case "1":
+                    case "2":
+                        CreateUsr usr = new CreateUsr();
+                        usr.Create();
+                        
+                        break;
+                    case "20":
+                        User.DisplayAllUser();
 
                         break;
+                    case "21":
+                        UserProfile.DisplayAllUserProfile();
 
+                        break;
                     default:
                         // unknow. do nothing
                         break;

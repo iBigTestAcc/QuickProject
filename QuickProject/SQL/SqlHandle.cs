@@ -23,7 +23,7 @@ namespace QuickProject
     {
         string szConString { get; set; }
 
-        private SQLiteConnection database;
+        public SQLiteConnection database;
 
         public SqlHandle()
         {
@@ -167,9 +167,19 @@ namespace QuickProject
             {
                 // Country
                 szTxt = string.Format("Add [{0}]", "Country");
+
                 var c1 = new Country
                 {
-                    Name = "Netherlands"
+                    Name = "UNKNOW",
+                    ShortName = "UNK"
+                };
+                database.Insert(c1);
+                MainProcess.log.AppendLog(szTxt);
+
+                c1 = new Country
+                {
+                    Name = "Netherlands",
+                    ShortName = "NL"
                 };
                 database.Insert(c1);
                 MainProcess.log.AppendLog(szTxt);
@@ -202,5 +212,67 @@ namespace QuickProject
 
             MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateMandatoryData", bDone.ToString()));
         }
+        public bool CheckNotHaveIban(string szIban)
+        {
+            bool bReturn = false;
+            string szTxt = string.Empty;
+            MainProcess.log.AppendLog(string.Format("> {0}({1})", "CheckNotHaveIban", szIban));
+            try
+            {
+                string szSql = string.Format("select id from UserProfile where UserIban = '{0}'", szIban);
+                var usrProfile = database.Query<UserProfile>(szSql);
+
+                if ((usrProfile == null) || usrProfile.Count == 0)
+                {
+                    bReturn = true;
+                }
+                else
+                {
+                    bReturn = false;
+                }
+                MainProcess.log.AppendLog(string.Format("Total profile found {0})", usrProfile.Count));
+            }
+            catch (Exception ex)
+            {
+                bReturn = false;
+                szTxt = string.Format("{0}] EX:[{1}]", "CheckNotHaveIban", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            return bReturn;
+        }
+
+        public int GetCountryID(string szShortName)
+        {
+            int bReturn = 1;
+            string szTxt = string.Empty;
+            MainProcess.log.AppendLog(string.Format("> {0}({1})", "GetCountryID", szShortName));
+            try
+            {
+                string szSql = string.Format("select id from Country where ShortName = '{0}'", szShortName);
+                var usrProfile = database.Query<UserProfile>(szSql);
+
+                if ((usrProfile == null) || usrProfile.Count == 0)
+                {
+                    bReturn = 1;
+                }
+                else
+                {
+                    bReturn = usrProfile.FirstOrDefault().Id;
+                }
+                MainProcess.log.AppendLog(string.Format("Total Country found {0})", usrProfile.Count));
+            }
+            catch (Exception ex)
+            {
+                szTxt = string.Format("{0}] EX:[{1}]", "GetCountryID", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            return bReturn;
+        }
+
+        
+
+        
     }
 }

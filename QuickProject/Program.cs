@@ -17,12 +17,14 @@ namespace QuickProject
         public static string szNlogPath { get; set; }
 
         public static LogEvents log = null;
+        public static SqlHandle sql = null;
         static void Main(string[] args)
         {
             try
             {
                 Init();
-                SqlHandle sql = new SqlHandle();
+
+                sql = new SqlHandle();
 
                 MainMenu main = new MainMenu();
                 main.StartMenu();

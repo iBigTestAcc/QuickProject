@@ -25,5 +25,10 @@ namespace QuickProject.Model
 
         [ForeignKey(typeof(DepositHistroy))]
         public int DepositId { get; set; }
+
+        [ForeignKey(typeof(CreateUsrHistory))]
+        public int CreateUsrId { get; set; }
+
+        public string DateTime { get; set; }
     }
 }
