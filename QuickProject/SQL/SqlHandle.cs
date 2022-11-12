@@ -1,0 +1,206 @@
+﻿using System;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using System.Collections.Generic;
+using System.Diagnostics;
+using SQLite;
+using ConsoleProject.Model;
+using System.Collections;
+using SQLiteNetExtensions.Extensions;
+using SQLitePCL;
+using QuickProject.Model;
+using NLog.Fluent;
+using System.Security.Policy;
+
+namespace QuickProject
+{
+
+    public class SqlHandle
+    {
+        string szConString { get; set; }
+
+        private SQLiteConnection database;
+
+        public SqlHandle()
+        {
+            bool bDone = true;
+            string szTxt = string.Empty;
+
+            try
+            {
+                string Path = string.Format(@"{0}\{1}",Environment.CurrentDirectory, @"DB\TestDB.sqlite");
+                if (!File.Exists(Path))
+                {
+                    CreateDB(Path);
+                }
+                else
+                {
+                    database = new SQLiteConnection(Path);
+                }
+
+                //Test(Path);
+            }
+            catch (Exception ex)
+            {
+                bDone = false;
+                szTxt = string.Format("{0}] EX:[{1}]", "SqlHandle", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+        }
+
+        public void Test(string szPath)
+        {
+            try
+            {
+                // test query
+                var testC = database.Query<Country>("select * from Country");
+
+                // test update query
+                database.Query<Country>("update Country set name='lol' where id='1'");
+                testC = database.Query<Country>("select * from Country");
+
+                // update with obj
+                database.UpdateWithChildren(new Country { Id = 1, Name = "Netherlands" });
+                testC = database.Query<Country>("select * from Country");
+
+                var end = 0;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(string.Format("{0}] EX:[{1}]", "Test", ex.Message));
+            }
+        }
+        public void CreateDB(string szPath)
+        {
+            string szTxt = string.Empty;
+            bool bDone = true;
+            MainProcess.log.AppendLog(string.Format("> {0}", "CreateDB"));
+
+            try
+            {
+                database = new SQLiteConnection(szPath);
+
+                CreateTable();
+
+                CreateMandatoryData();
+            }
+            catch(Exception ex)
+            {
+                bDone = false;
+                szTxt = string.Format("{0}] EX:[{1}]", "CreateDB", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateDB", bDone.ToString()));
+
+        }
+
+        public void CreateTable()
+        {
+            bool bDone = true;
+            string szTxt = string.Empty;
+            MainProcess.log.AppendLog(string.Format("> {0}", "CreateTable"));
+
+            try
+            {
+                szTxt = string.Format("Create [{0}]", "Country");
+                database.CreateTable<Country>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "Currency");
+                database.CreateTable<Currency>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "DepositHistroy");
+                database.CreateTable<DepositHistroy>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "FeeType");
+                database.CreateTable<FeeType>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "TransactionHistory");
+                database.CreateTable<TransactionHistory>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "TransactionType");
+                database.CreateTable<TransactionType>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "TransferHistory");
+                database.CreateTable<TransferHistory>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "User");
+                database.CreateTable<User>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "UserProfile");
+                database.CreateTable<UserProfile>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "UserPwd");
+                database.CreateTable<UserPwd>();
+                MainProcess.log.AppendLog(szTxt);
+            }
+            catch (Exception ex)
+            {
+                bDone = false;
+                szTxt = string.Format("{0}] EX:[{1}]", "CreateTable", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+            MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateTable", bDone));
+        }
+
+        public void CreateMandatoryData()
+        {
+            string szTxt = string.Empty;
+            bool bDone = true;
+            MainProcess.log.AppendLog(string.Format("> {0}", "CreateMandatoryData"));
+
+            try
+            {
+                // Country
+                szTxt = string.Format("Add [{0}]", "Country");
+                var c1 = new Country
+                {
+                    Name = "Netherlands"
+                };
+                database.Insert(c1);
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Add [{0}]", "Currency");
+                var currency = new Currency
+                {
+                    CurrencyName = "EURO",
+                    Symbol = "€"
+                };
+                database.Insert(currency);
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Add [{0}]", "FeeType");
+                var fee = new FeeType
+                {
+                    FeeAmount = 0.1,
+                    Type = Fee.Percent
+                };
+                database.Insert(fee);
+                MainProcess.log.AppendLog(szTxt);
+
+            }
+            catch (Exception ex)
+            {
+                bDone = false;
+                szTxt = string.Format("{0}] EX:[{1}]", "CreateMandatoryData", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateMandatoryData", bDone.ToString()));
+        }
+    }
+}
