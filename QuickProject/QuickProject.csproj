@@ -76,9 +76,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logic\CreateUsr.cs" />
+    <Compile Include="Logic\DepositProcess.cs" />
     <Compile Include="Logic\RandomIban.cs" />
     <Compile Include="Logic\MainMenu.cs" />
     <Compile Include="Model\CreateUsrHistory.cs" />
+    <Compile Include="Model\AccBalance.cs" />
     <Compile Include="Model\UserPwd.cs" />
     <Compile Include="Model\UserProfile.cs" />
     <Compile Include="Model\User.cs" />

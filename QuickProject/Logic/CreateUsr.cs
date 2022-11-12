@@ -1,4 +1,5 @@
 ﻿using ConsoleProject.Model;
+using QuickProject.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,7 @@ namespace QuickProject.Logic
                 {
                     int countryId =  MainProcess.sql.GetCountryID(szIban.Substring(0, 2));
 
+                    MainProcess.sql.database.BeginTransaction();
                     UserProfile usrPro = new UserProfile
                     {
                         UserIban = szIban,
@@ -52,21 +54,51 @@ namespace QuickProject.Logic
                     };
                     usrPro = UserProfile.InsertUserProfile(usrPro);
 
+                    // Create balance
+                    var balance = new AccBalance
+                    {
+                        Balance = 0,
+                        UserIban = usrPro.UserIban
+                    };
+                    balance = AccBalance.InsertAccBalance(balance);
+
                     User usr = new User
                     {
-                        ProfileId = usrPro.Id
+                        ProfileId = usrPro.Id,
+                        BalanceId = balance.Id
                     };
-
                     usr = User.InsertUser(usr);
 
+                    CreateUsrHistory createHis = new CreateUsrHistory
+                    {
+                         UserId = usr.Id,
+                         UserProfileId = usrPro.Id,
+                         AccBalanceId = balance.Id,
+                         DateTime = DateTime.Now.ToString("yyyy-MMM-dd HH:mm:ss fff")
+                    };
+                    createHis = CreateUsrHistory.InsertCreateUsrHistory(createHis);
+
+                    TransactionHistory transHis = new TransactionHistory
+                    {
+                        DepositId = 0,
+                        TransferId = 0,
+                        CreateUsrId = createHis.Id,
+                        DateTime = createHis.DateTime,
+                        Type = TrxTypeEnum.ToDescriptionString(TrxType.CreateUsr)
+                    };
+                    transHis = TransactionHistory.InsertTransferHistory(transHis);
+
+                    MainProcess.sql.database.Commit();
                     szTxt = string.Format("Insert done UserIban[{0}] ProfileId[{1}] UserId[{2}]", 
                         usrPro.UserIban,
                         usrPro.Id,
                         usr.Id);
+                    MainProcess.log.AppendLog(szTxt);
                 }
             }
             catch(Exception ex)
             {
+                MainProcess.sql.database.Rollback();
                 bNotFoundIban = false;
                 szTxt = string.Format("{0}] EX:[{1}]", "CreateUsr.Create()", ex.Message);
                 MainProcess.log.AppendLog(szTxt);

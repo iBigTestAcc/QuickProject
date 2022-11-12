@@ -22,6 +22,9 @@ namespace ConsoleProject.Model
         [ForeignKey(typeof(UserProfile))]
         public int ProfileId { get; set; }
 
+        [ForeignKey(typeof(AccBalance))]
+        public int BalanceId { get; set; }
+
         [ForeignKey(typeof(UserPwd))]
         public int PwdId { get; set; }
 
@@ -62,6 +65,7 @@ namespace ConsoleProject.Model
                     szTxt = string.Format("\t\t\tFound id[{0}] ProfileId[{1}]", item.Id, item.ProfileId);
                     Console.WriteLine(szTxt);
                     var profile = UserProfile.DisplayAllUserProfile(item.ProfileId);
+                    var balance = AccBalance.DisplayAllAccBalance(item.BalanceId);
                     Console.WriteLine("--------------------------------------------\n");
                     //if (profile != null && profile.Count > 0)
                     //{

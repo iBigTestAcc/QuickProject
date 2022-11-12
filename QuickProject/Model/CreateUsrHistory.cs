@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ConsoleProject.Model;
 using SQLite;
 using SQLiteNetExtensions.Attributes;
-
+using SQLiteNetExtensions.Extensions;
 
 namespace QuickProject.Model
 {
@@ -19,7 +19,32 @@ namespace QuickProject.Model
         public int Id { get; set; }
         
         [ForeignKey(typeof(User))]
-        public int To { get; set; }
+        public int UserId { get; set; }
 
+        [ForeignKey(typeof(UserProfile))]
+        public int UserProfileId { get; set; }
+
+        [ForeignKey(typeof(AccBalance))]
+        public int AccBalanceId { get; set; }
+
+        public string DateTime { get; set; }
+
+        public static CreateUsrHistory InsertCreateUsrHistory(CreateUsrHistory createObj)
+        {
+            string szTxt = string.Empty;
+            MainProcess.log.AppendLog(string.Format("> {0}('{1}')", "InsertCreateUsrHistory", createObj.Id));
+            try
+            {
+                MainProcess.sql.database.InsertWithChildren(createObj);
+                MainProcess.sql.database.GetChildren<CreateUsrHistory>(createObj);
+            }
+            catch (Exception ex)
+            {
+                szTxt = string.Format("{0}] EX:[{1}]", "InsertCreateUsrHistory", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            return createObj;
+        }
     }
 }
