@@ -17,6 +17,11 @@ namespace ConsoleProject.Model
     [Table("UserProfile")]
     public class UserProfile
     {
+        public enum ExceptionList
+        {
+            DuplicateIBAN
+        }
+
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
@@ -51,7 +56,10 @@ namespace ConsoleProject.Model
         {
             string szTxt = string.Empty;
             List<UserProfile> userList = new List<UserProfile>();
-            MainProcess.log.AppendLog(string.Format("> {0}", "DisplayAllUserProfile"));
+            if (!id.HasValue)
+            {
+                MainProcess.log.AppendLog(string.Format("> {0}", "DisplayAllUserProfile"));
+            }
             try
             {
                 string sql = "select * from UserProfile";
@@ -75,5 +83,68 @@ namespace ConsoleProject.Model
 
             return userList;
         }
+
+        public static List<UserProfile> GetUsrProfile(string szIban)
+        {
+            string szTxt = string.Empty;
+            bool bDone = false;
+            List<UserProfile> userList = new List<UserProfile>();
+            MainProcess.log.AppendLog(string.Format("> {0}({1})", "GetUsrProfile", szIban));
+
+            try
+            {
+                string sql = string.Format("select * from UserProfile where UserIban = '{0}'", szIban);
+                userList = MainProcess.sql.database.Query<UserProfile>(sql);
+                szTxt = String.Format("Query all from User Found [{0}]", userList.Count);
+                bDone = true;
+            }
+            catch(Exception ex)
+            {
+                szTxt = string.Format("{0}] EX:[{1}]", "GetUsrProfile", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "GetUsrProfile", szIban, bDone.ToString()));
+
+            return userList;
+        }
+
+        public static UserProfile VerifyUsrProfile(List<UserProfile> profileList)
+        {
+            string szTxt = string.Empty;
+            bool bDone = false;
+            UserProfile bRet = null;
+            MainProcess.log.AppendLog(string.Format("> {0}(Count{1})", "VerifyUsrProfile", profileList.Count));
+
+            try
+            {
+                if(profileList.Count > 1)
+                {
+                    szTxt = String.Format("Found more than 1 IBAN Exception:{0}", ExceptionList.DuplicateIBAN.ToString());
+                    throw new Exception(szTxt);
+                }
+                else
+                {
+                    bRet = profileList.FirstOrDefault();
+                }
+                bDone = true;
+            }
+            catch (Exception ex)
+            {
+                szTxt = string.Format("{0}] EX:[{1}]", "GetUsrProfile", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+
+            if (bRet != null)
+            {
+                MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "GetUsrProfile", bRet.UserIban, bDone.ToString()));
+            }
+            else
+            {
+                MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "GetUsrProfile", "NULL", bDone.ToString()));
+            }
+            return bRet;
+        }
+
     }
 }

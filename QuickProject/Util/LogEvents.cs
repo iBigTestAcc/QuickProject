@@ -51,7 +51,7 @@ namespace QuickProject
             logger = XUtl.GetCurrentLog();
 		}
 
-		public void AppendLog(string EventDesc)
+		public void AppendLog(string EventDesc, bool? onConsole = false)
 		{
             string szTxt = string.Empty;
 
@@ -61,8 +61,10 @@ namespace QuickProject
                 logger = LogManager.GetLogger(LogTypeEvent);
 
                 logger.Trace(EventDesc);
-
-                Console.WriteLine(EventDesc);
+                if (onConsole.HasValue && onConsole.Value)
+                {
+                    Console.WriteLine(EventDesc);
+                }
 
             }
 			catch (Exception ex2)

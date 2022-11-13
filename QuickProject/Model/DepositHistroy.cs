@@ -18,11 +18,14 @@ namespace QuickProject.Model
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        [ForeignKey(typeof(FeeType))]
+        [ForeignKey(typeof(Fee))]
         public int FeeId { get; set; }
 
-        [ForeignKey(typeof(User))]
-        public int To { get; set; }
+        [ForeignKey(typeof(UserProfile))]
+        public int UserProfileId { get; set; }
+
+        [ForeignKey(typeof(UserProfile))]
+        public string UserIban { get; set; }
 
         public double Amount { get;set; }
 
@@ -31,5 +34,6 @@ namespace QuickProject.Model
         [ForeignKey(typeof(Currency))]
         public int CurrencyId { get; set; }
 
+        public string DateTime {get; set; }
     }
 }

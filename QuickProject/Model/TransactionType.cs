@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,24 @@ namespace QuickProject.Model
 {
     public enum TrxType
     {
+        [DescriptionAttribute("Transfer")]
         Transfer,
+        [DescriptionAttribute("Deposit")]
         Deposit,
+        [DescriptionAttribute("CreateUsr")]
         CreateUsr
+    }
+
+    public static class TrxTypeEnum
+    {
+        public static string ToDescriptionString(this TrxType val)
+        {
+            DescriptionAttribute[] attributes = (DescriptionAttribute[])val
+               .GetType()
+               .GetField(val.ToString())
+               .GetCustomAttributes(typeof(DescriptionAttribute), false);
+            return attributes.Length > 0 ? attributes[0].Description : string.Empty;
+        }
     }
 
     [Table("TransactionType")]

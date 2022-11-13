@@ -79,7 +79,7 @@ namespace QuickProject
         {
             string szTxt = string.Empty;
             bool bDone = true;
-            MainProcess.log.AppendLog(string.Format("> {0}", "CreateDB"));
+            MainProcess.log.AppendLog(string.Format("> {0}", "CreateDB"), true);
 
             try
             {
@@ -96,7 +96,7 @@ namespace QuickProject
                 MainProcess.log.AppendLog(szTxt);
             }
 
-            MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateDB", bDone.ToString()));
+            MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateDB", bDone.ToString()), true);
 
         }
 
@@ -147,6 +147,15 @@ namespace QuickProject
                 szTxt = string.Format("Create [{0}]", "UserPwd");
                 database.CreateTable<UserPwd>();
                 MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "AccBalance");
+                database.CreateTable<AccBalance>();
+                MainProcess.log.AppendLog(szTxt);
+
+                szTxt = string.Format("Create [{0}]", "CreateUsrHistory");
+                database.CreateTable<CreateUsrHistory>();
+                MainProcess.log.AppendLog(szTxt);
+                
             }
             catch (Exception ex)
             {
@@ -197,7 +206,7 @@ namespace QuickProject
                 var fee = new FeeType
                 {
                     FeeAmount = 0.1,
-                    Type = Fee.Percent
+                    Type = FeeEnum.ToDescriptionString(Fee.Percent)
                 };
                 database.Insert(fee);
                 MainProcess.log.AppendLog(szTxt);
