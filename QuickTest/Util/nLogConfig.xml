@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      autoReload="true"
+      internalLogLevel="Info"
+      internalLogFile=".\Log\internal-nlog.txt">
+
+  <!-- enable asp.net core layout renderers -->
+  <extensions>
+    <!--<add assembly="NLog.Web.AspNetCore"/>-->
+  </extensions>
+
+  <!-- the targets to write to -->
+  <targets>
+    <!-- write logs to file  -->
+    <target xsi:type="File" name="logfile" fileName=".\Log\EventLog_${date:format=yyyyMMdd}.txt"
+            layout="${date:format=yyyy-MM-dd HH\:mm\:ss}|${level}|${message}" 
+			keepFileOpen="false" 
+			AutoFlush="true"
+			ArchiveNumbering="Sequence"
+			archiveFileName=".\Log\EventLog_${date:format=yyyyMMdd}.{###}.txt"
+            archiveAboveSize="10240000" />
+			
+  </targets>
+
+  <!-- rules to map from logger name to target -->
+  <rules>
+    <!--All logs, including from Microsoft-->
+    <logger name="eventRule" minlevel="Trace" writeTo="logfile" />
+	
+    <!--Skip non-critical Microsoft logs and so log only own logs-->
+    <logger name="Microsoft.*" maxlevel="Info" final="true" />
+  </rules>
+</nlog>
