@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="QuickProject.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="dMaxDepAmount" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">10000000</Value>
+    </Setting>
+    <Setting Name="dMinDepAmount" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="dMaxTransferAmount" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">10000000</Value>
+    </Setting>
+    <Setting Name="dMinTransferAmount" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
