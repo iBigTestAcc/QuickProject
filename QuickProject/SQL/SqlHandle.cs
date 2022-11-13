@@ -27,7 +27,6 @@ namespace QuickProject
 
         public SqlHandle()
         {
-            bool bDone = true;
             string szTxt = string.Empty;
 
             try
@@ -35,6 +34,7 @@ namespace QuickProject
                 string Path = string.Format(@"{0}\{1}",Environment.CurrentDirectory, @"DB\TestDB.sqlite");
                 if (!File.Exists(Path))
                 {
+                    MainProcess.log.AppendLog("Database not found First time setting.", true);
                     CreateDB(Path);
                 }
                 else
@@ -46,7 +46,6 @@ namespace QuickProject
             }
             catch (Exception ex)
             {
-                bDone = false;
                 szTxt = string.Format("{0}] EX:[{1}]", "SqlHandle", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
@@ -66,8 +65,6 @@ namespace QuickProject
                 // update with obj
                 database.UpdateWithChildren(new Country { Id = 1, Name = "Netherlands" });
                 testC = database.Query<Country>("select * from Country");
-
-                var end = 0;
 
             }
             catch (Exception ex)
@@ -104,7 +101,7 @@ namespace QuickProject
         {
             bool bDone = true;
             string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}", "CreateTable"));
+            MainProcess.log.AppendLog(string.Format("> {0}", "CreateTable"), true);
 
             try
             {
@@ -170,7 +167,7 @@ namespace QuickProject
         {
             string szTxt = string.Empty;
             bool bDone = true;
-            MainProcess.log.AppendLog(string.Format("> {0}", "CreateMandatoryData"));
+            MainProcess.log.AppendLog(string.Format("> {0}", "CreateMandatoryData"), true);
 
             try
             {
@@ -209,6 +206,15 @@ namespace QuickProject
                     Type = FeeEnum.ToDescriptionString(Fee.Percent)
                 };
                 database.Insert(fee);
+
+                szTxt = string.Format("Add [{0}]", "FeeType");
+                fee = new FeeType
+                {
+                    FeeAmount = 0,
+                    Type = FeeEnum.ToDescriptionString(Fee.Amount)
+                };
+                database.Insert(fee);
+
                 MainProcess.log.AppendLog(szTxt);
 
             }
