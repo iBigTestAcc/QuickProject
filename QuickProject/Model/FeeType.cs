@@ -68,7 +68,7 @@ namespace QuickProject.Model
                 else
                 {
                     // transfer no fee
-                    string sql = string.Format("select * from FeeType where FeeAmount = '{0}' AND Type = '{1}'", 0, Fee.Amount);
+                    string sql = string.Format("select * from FeeType where FeeAmount = '{0}' AND Type = '{1}'", 0, FeeEnum.ToDescriptionString(Fee.Amount));
                     feeList = MainProcess.sql.database.Query<FeeType>(sql);
                     szTxt = String.Format("Query all from Fee Found [{0}]", feeList.Count);
                     bDone = true;

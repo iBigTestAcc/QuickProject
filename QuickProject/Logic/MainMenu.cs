@@ -1,9 +1,11 @@
 ﻿using ConsoleProject.Model;
 using NLog.Fluent;
 using QuickProject.Model;
+using QuickProject.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +34,7 @@ namespace QuickProject.Logic
                     Console.WriteLine("\t\t21. View all Profile");
                     Console.WriteLine("\t\t22. View all History");
                     Console.WriteLine("\t3. Depoist");
+                    Console.WriteLine("\t\t30. View all Acc balance");
                     Console.WriteLine("\t4. Transfer");
                     Console.WriteLine("\tX. Exit");
 
@@ -49,7 +52,7 @@ namespace QuickProject.Logic
             }
         }
 
-        public void SwitchCaseMenu(string szIn)
+        internal void SwitchCaseMenu(string szIn)
         {
             string szTxt = string.Empty;
             try
@@ -75,13 +78,6 @@ namespace QuickProject.Logic
 
                     case "22":
 
-                        var acc = MainProcess.sql.database.Query<AccBalance>("select * from AccBalance");
-                        foreach (var item in acc)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] Balance[[{2}]",
-                                item.Id, item.UserIban, item.Balance));
-                        }
-
                         var usrHis = MainProcess.sql.database.Query<CreateUsrHistory>("select * from CreateUsrHistory");
                         foreach(var item in usrHis)
                         {
@@ -98,10 +94,48 @@ namespace QuickProject.Logic
                         break;
 
                     case "3":
+                        // 20221113
+                        // todo: limit deposit amount with 2 digit decimal point
                         ProcessDeposit();
                         break;
 
-                  
+                    case "30":
+                        var acc = MainProcess.sql.database.Query<AccBalance>("select * from AccBalance");
+                        foreach (var item in acc)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] Balance[[{2}]",
+                                item.Id, item.UserIban, item.Balance));
+                        }
+                        break;
+
+                    case "4":
+                        // todo
+                        // get source acc
+                        // get dest acc
+                        // get amount
+                        // ver source acc, dest, amount ,show balance
+                        // confirm dest , amount
+                        // else???
+
+                        ProcessTransfer();
+
+                        break;
+
+                    case "999":
+                        //var fee = new FeeType
+                        //{
+                        //    FeeAmount = 0,
+                        //    Type = FeeEnum.ToDescriptionString(Fee.Amount)
+                        //};
+                        //MainProcess.sql.database.Insert(fee);
+                        //MainProcess.sql.database.DropTable<TransferHistory>();
+                        //MainProcess.sql.database.CreateTable<TransferHistory>();
+
+                        //var tmp = MainProcess.sql.database.Query<TransferHistory>("select * from TransferHistory");
+
+                        //var asdf = 0;
+
+                        break;
                     default:
                         // unknow. do nothing
                         break;
@@ -116,57 +150,81 @@ namespace QuickProject.Logic
             }
         }
 
-        public bool GetIBAN(ref string szIban)
+        internal void ProcessTransfer()
         {
-            bool bRet = true;
-            bool iBanOk = false;
-            while (!iBanOk && bRet)
+            Console.Clear();
+            bool bInProcess = true;
+            string szSourceIban = string.Empty;
+            string szDestIban = string.Empty;
+            string szAmount = string.Empty;
+            string szTxt = string.Empty;
+
+            IOandVer.VerifyResult result = IOandVer.VerifyResult.OK;
+            try
             {
-                szIban = DepositProcess.ReceiveInput();
-                if (szIban == "X")
+                bInProcess = IOandVer.GetIBAN(ref szSourceIban, "Source account");
+                if (bInProcess)
                 {
-                    bRet = false;
+                    bInProcess = IOandVer.GetIBAN(ref szDestIban, "Destination account");
+                }
+                bInProcess = IOandVer.GetAmount(ref szAmount, bInProcess);
+
+                if (bInProcess)
+                {
+                    var tranferObj = TansferProcess.ValidationTransferData(szSourceIban, szDestIban, szAmount);
+
+                    if(tranferObj != null)
+                    {
+                        // confirm
+                        string szInput = string.Empty;
+                        // Display and confirm
+                        while (szInput != "YES" && szInput != "NO")
+                        {
+                            Console.Clear();
+
+                            szTxt = string.Format("Confirm to transer from IBAN [{0}] \n", tranferObj.sourceProfile.UserIban);
+                            szTxt += string.Format("To IBAN [{0}] \n", tranferObj.DestProfile.UserIban);
+                            szTxt += string.Format("Total Amount [{0}] \n", tranferObj.transAmunt.TotalAmount);
+                            szTxt += string.Format("Fee Amount [{0}] \n", tranferObj.transAmunt.FeeAmount);
+                            szTxt += string.Format("Net Amount to Account [{0}] \n", tranferObj.transAmunt.NetAmount);
+
+                            Console.WriteLine(szTxt);
+                            Console.Write("Enter [YES] for confirm [NO] for cancel:");
+                            szInput = Console.ReadLine();
+                        }
+
+                        if (szInput == "YES")
+                        {
+                            // go to confirm
+                            Console.WriteLine("OK");
+                            result = TansferProcess.TriggerConfirmTransfer(tranferObj);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Cancel");
+                        }
+                    }
                 }
                 else
                 {
-                    var verResult = DepositProcess.VerifyIban(szIban);
-                    if (verResult == DepositProcess.VerifyResult.OK)
-                    {
-                        iBanOk = true;
-                    }
-                    else
-                    {
-                        DepositProcess.DisplayVerifyError(verResult);
-                    }
+                    // Someting wrong
+                    //Console.WriteLine(string.Format("Someting wrong"));
+                }
+
+                if(result != IOandVer.VerifyResult.OK)
+                {
+                    IOandVer.DisplayVerifyError(result);
                 }
             }
-
-            return bRet;
-        }
-
-        public bool GetDepAmount(ref string szAmount, bool bInProcess)
-        {
-            bool iAmountOk = false;
-            while (bInProcess && !iAmountOk)
+            catch (Exception ex)
             {
-                szAmount = DepositProcess.ReceiveAmount();
-                if(szAmount == "X")
-                {
-                    bInProcess = false;
-                }
-                else
-                {
-                    var verResult = DepositProcess.VerifyAmount(szAmount);
-                    if(verResult == DepositProcess.VerifyResult.OK)
-                    {
-                        iAmountOk = true;
-                    }
-                }
+                Console.WriteLine(string.Format("{0}] EX:[{1}]", "ProcessTransfer", ex.Message));
             }
-            return iAmountOk;
         }
 
-        public void ProcessDeposit()
+        
+
+        internal void ProcessDeposit()
         {
             Console.Clear();
             bool bInProcess = true;
@@ -175,8 +233,8 @@ namespace QuickProject.Logic
             string szTxt = string.Empty;
             try
             {
-                bInProcess = GetIBAN(ref szIban);
-                bInProcess = GetDepAmount(ref szAmiunt, bInProcess);
+                bInProcess = IOandVer.GetIBAN(ref szIban, "Deposit");
+                bInProcess = IOandVer.GetAmount(ref szAmiunt, bInProcess);
 
                 if (bInProcess)
                 {
