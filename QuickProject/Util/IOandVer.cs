@@ -166,8 +166,8 @@ namespace QuickProject.Util
             {
                 Console.Write("Enter Amount, [X] for exit:");
                 szInAmount = Console.ReadLine();
-                double val = 0;
-                if(double.TryParse(szInAmount, out val))
+                decimal val = 0;
+                if(decimal.TryParse(szInAmount, out val))
                 {
                     szInAmount = val.ToString("0.00");
                 }
