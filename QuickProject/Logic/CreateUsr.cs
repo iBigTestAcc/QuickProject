@@ -26,8 +26,8 @@ namespace QuickProject.Logic
         // insert if unique
         public bool Create()
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}", "CreateUsr.Create()"));
+            string szTxt = string.Format("> {0}", "CreateUsr.Create()");
+            MainProcess.log.AppendLog(szTxt);
             int loopCount = 0;
             int maxCount = 3;
             bool bNotFoundIban = false;
@@ -103,7 +103,8 @@ namespace QuickProject.Logic
                 szTxt = string.Format("{0}] EX:[{1}]", "CreateUsr.Create()", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-            MainProcess.log.AppendLog(string.Format("< {0}", "CreateUsr.Create() [{1}]", bNotFoundIban.ToString()));
+            szTxt = string.Format("< {0}", "CreateUsr.Create() [{1}]", bNotFoundIban.ToString(), bNotFoundIban);
+            MainProcess.log.AppendLog(szTxt);
             return bNotFoundIban;
         }
     }

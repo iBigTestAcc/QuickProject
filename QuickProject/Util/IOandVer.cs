@@ -269,9 +269,9 @@ namespace QuickProject.Util
 
         public static VerifyResult VerIbanAccount(string szIban, ref UserProfile usrProfile, AccAction accAction)
         {
-            string szTxt = string.Empty;
+            string szTxt = string.Format("> {0}({1})", "VerIbanAccount", szIban);
             bool bDone = false;
-            MainProcess.log.AppendLog(string.Format("> {0}({1})", "VerIbanAccount", szIban));
+            MainProcess.log.AppendLog(szTxt);
             IOandVer.VerifyResult bVerResult = IOandVer.VerifyResult.OK;
             UserProfile bReturnObj = null;
 
@@ -310,8 +310,8 @@ namespace QuickProject.Util
                 szTxt = string.Format("{0}] EX:[{1}]", "VerIbanAccount", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-
-            MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "VerIbanAccount", szIban, bDone.ToString()));
+            szTxt = string.Format("< {0}({1}) [{2}]", "VerIbanAccount", szIban, bDone.ToString());
+            MainProcess.log.AppendLog(szTxt);
 
             return bVerResult;
         }

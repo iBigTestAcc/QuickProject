@@ -38,10 +38,10 @@ namespace QuickProject.Logic
         }
         public static TransferConfirm ValidationTransferData(string szSourceIban, string szDestIban, string szAmount)
         {
-            string szTxt = string.Empty;
+            string szTxt = string.Format("> {0}({1}, {2}, {3})", "ValidationTransferData",
+                szSourceIban, szDestIban, szAmount);
             bool bDone = false;
-            MainProcess.log.AppendLog(string.Format("> {0}({1}, {2}, {3})", "ValidationTransferData", 
-                szSourceIban, szDestIban, szAmount));
+            MainProcess.log.AppendLog(szTxt);
             UserProfile sourceProfile = null;
             UserProfile destProfile = null;
             IOandVer.VerifyResult verResult = IOandVer.VerifyResult.OK;
@@ -103,16 +103,17 @@ namespace QuickProject.Logic
                 MainProcess.log.AppendLog(szTxt);
             }
 
-            MainProcess.log.AppendLog(string.Format("< {0}({1})]", "ValidationTransferData", bDone.ToString()));
+            szTxt = string.Format("< {0}({1})]", "ValidationTransferData", bDone.ToString());
+            MainProcess.log.AppendLog(szTxt);
 
             return retunObl;
         }
 
         public static TransferAmount VerFeeAmount(string szAmount)
         {
-            string szTxt = string.Empty;
+            string szTxt = string.Format("> {0}({1})", "TansferProcess.VerFeeAmount", szAmount);
             bool bDone = false;
-            MainProcess.log.AppendLog(string.Format("> {0}({1})", "TansferProcess.VerFeeAmount", szAmount));
+            MainProcess.log.AppendLog(szTxt);
             TransferAmount returnObj = null;
             try
             {
@@ -150,7 +151,8 @@ namespace QuickProject.Logic
                 MainProcess.log.AppendLog(szTxt);
             }
 
-            MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "TansferProcess.VerFeeAmount", returnObj.FeeAmount, bDone.ToString()));
+            szTxt = string.Format("< {0}({1}) [{2}]", "TansferProcess.VerFeeAmount", returnObj.FeeAmount, bDone.ToString());
+            MainProcess.log.AppendLog(szTxt);
 
             return returnObj;
         }
@@ -169,6 +171,7 @@ namespace QuickProject.Logic
                     {
                         verReturn = VerifyResult.NotEnoughBalance;
                     }
+                    bDoune = true;
                 }
                 else
                 {
@@ -182,18 +185,19 @@ namespace QuickProject.Logic
                 szTxt = string.Format("{0}] EX:[{1}]", "TransferConfirm.CheckAmountWithBalance()", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-            MainProcess.log.AppendLog(string.Format("< {0}", "TransferConfirm.CheckAmountWithBalance() [{1}]", bDoune.ToString()));
+            szTxt = string.Format("< {0}", "TransferConfirm.CheckAmountWithBalance() [{1}]", bDoune.ToString());
+            MainProcess.log.AppendLog(szTxt);
 
             return verReturn;
         }
         public static VerifyResult SaveTransactionRecord(TransferConfirm confirmObj)
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}", "TransferConfirm.SaveTransactionRecord(From[{0}] To[{1}] TotalAmount[{2}] Net[{3}])",
+            string szTxt = string.Format("> {0}", "TransferConfirm.SaveTransactionRecord(From[{0}] To[{1}] TotalAmount[{2}] Net[{3}])",
                 confirmObj.sourceProfile.UserIban,
                 confirmObj.DestProfile.UserIban,
                 confirmObj.transAmunt.TotalAmount,
-                confirmObj.transAmunt.NetAmount));
+                confirmObj.transAmunt.NetAmount);
+            MainProcess.log.AppendLog(szTxt);
             bool bNotFoundIban = false;
             VerifyResult verReturn = VerifyResult.OK;
 
@@ -242,13 +246,14 @@ namespace QuickProject.Logic
                 szTxt = string.Format("{0}] EX:[{1}]", "TransferConfirm.SaveTransactionRecord()", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-            MainProcess.log.AppendLog(string.Format("< {0}", "TransferConfirm.SaveTransactionRecord() [{1}]", bNotFoundIban.ToString()));
+            szTxt = string.Format("< {0}", "TransferConfirm.SaveTransactionRecord() [{1}]", bNotFoundIban.ToString());
+            MainProcess.log.AppendLog(szTxt);
             return verReturn;
         }
         public static VerifyResult TriggerConfirmTransfer(TransferConfirm confirmObj)
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}", "TransferConfirm.TriggerConfirmTransfer()"));
+            string szTxt = string.Format("> {0}", "TransferConfirm.TriggerConfirmTransfer()");
+            MainProcess.log.AppendLog(szTxt);
             bool bNotFoundIban = false;
             VerifyResult verReturn = VerifyResult.OK;
             try
@@ -292,7 +297,8 @@ namespace QuickProject.Logic
                 szTxt = string.Format("{0}] EX:[{1}]", "TransferConfirm.TransferConfirm()", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-            MainProcess.log.AppendLog(string.Format("< {0}", "TransferConfirm.TransferConfirm() [{1}]", bNotFoundIban.ToString()));
+            szTxt = string.Format("< {0}", "TransferConfirm.TransferConfirm() [{1}]", bNotFoundIban.ToString());
+            MainProcess.log.AppendLog(szTxt);
             return verReturn;
         }
     }

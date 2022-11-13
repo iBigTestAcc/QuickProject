@@ -96,8 +96,8 @@ namespace QuickProject
                 szTxt = string.Format("{0}] EX:[{1}]", "CreateDB", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-
-            MainProcess.log.AppendLog(string.Format("< {0} [{1}]", "CreateDB", bDone.ToString()), true);
+            szTxt = string.Format("< {0} [{1}]", "CreateDB", bDone.ToString());
+            MainProcess.log.AppendLog(szTxt, true);
 
         }
 

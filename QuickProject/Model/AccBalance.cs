@@ -29,8 +29,8 @@ namespace ConsoleProject.Model
 
         public static AccBalance InsertAccBalance(AccBalance balance)
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}('{1}')", "InsertAccBalance", balance.UserIban));
+            string szTxt = string.Format("> {0}('{1}')", "InsertAccBalance", balance.UserIban);
+            MainProcess.log.AppendLog(szTxt);
             try
             {
                 MainProcess.sql.database.InsertWithChildren(balance);
@@ -47,8 +47,8 @@ namespace ConsoleProject.Model
 
         public static AccBalance UpdateAccBalance(AccBalance balance)
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}('{1}')", "UpdateAccBalance", balance.UserIban));
+            string szTxt = string.Format("> {0}('{1}')", "UpdateAccBalance", balance.UserIban);
+            MainProcess.log.AppendLog(szTxt);
             try
             {
                 MainProcess.sql.database.UpdateWithChildren(balance);
@@ -69,7 +69,8 @@ namespace ConsoleProject.Model
             List<AccBalance> userList = new List<AccBalance>();
             if (!id.HasValue)
             {
-                MainProcess.log.AppendLog(string.Format("> {0}", "DisplayAllAccBalance"));
+                szTxt = string.Format("> {0}", "DisplayAllAccBalance");
+                MainProcess.log.AppendLog(szTxt);
             }
             try
             {

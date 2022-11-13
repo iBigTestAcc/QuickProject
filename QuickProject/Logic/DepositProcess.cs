@@ -19,7 +19,8 @@ namespace QuickProject.Logic
         {
             string szTxt = string.Empty;
             bool bDone = false;
-            MainProcess.log.AppendLog(string.Format("> {0}({1})", "VerFeeAmount", szAmount));
+            szTxt = string.Format("> {0}({1})", "VerFeeAmount", szAmount);
+            MainProcess.log.AppendLog(szTxt);
             DepositAmount returnObj = null;
             try
             {
@@ -58,7 +59,8 @@ namespace QuickProject.Logic
                 MainProcess.log.AppendLog(szTxt);
             }
 
-            MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "VerFeeAmount", returnObj.FeeAmount, bDone.ToString()));
+            szTxt = string.Format("< {0}({1}) [{2}]", "VerFeeAmount", returnObj.FeeAmount, bDone.ToString());
+            MainProcess.log.AppendLog(szTxt);
 
             return returnObj;
         }
@@ -66,7 +68,8 @@ namespace QuickProject.Logic
         {
             string szTxt = string.Empty;
             bool bDone = false;
-            MainProcess.log.AppendLog(string.Format("> {0}({1},{2})", "VerifyDepositData", szIban, szAmount));
+            szTxt = string.Format("> {0}({1},{2})", "VerifyDepositData", szIban, szAmount);
+            MainProcess.log.AppendLog(szTxt);
             ConfirmDeposit returnObj = null;
             UserProfile usrProfile = null;
             try
@@ -81,6 +84,7 @@ namespace QuickProject.Logic
                         returnObj.UserProfileId = usrProfile.Id;
                         returnObj.szIban = szIban;
                         returnObj.depositAmount = VerFeeAmount(szAmount);
+                        bDone = true;
                     }
                 }
                 else
@@ -96,12 +100,14 @@ namespace QuickProject.Logic
 
             if (returnObj != null)
             {
-                MainProcess.log.AppendLog(string.Format("< {0}({1},{2}) [{3}]", "VerifyDepositData", 
-                    returnObj.szIban, returnObj.depositAmount.NetAmount, bDone.ToString()));
+                szTxt = string.Format("< {0}({1},{2}) [{3}]", "VerifyDepositData",
+                    returnObj.szIban, returnObj.depositAmount.NetAmount, bDone.ToString());
+                MainProcess.log.AppendLog(szTxt);
             }
             else
             {
-                MainProcess.log.AppendLog(string.Format("< {0}({1},{2}) [{3}]", "VerifyDepositData", "NULL", "NULL", bDone.ToString()));
+                szTxt = string.Format("< {0}({1},{2}) [{3}]", "VerifyDepositData", "NULL", "NULL", bDone.ToString());
+                MainProcess.log.AppendLog(szTxt);
             }
 
             return returnObj;
@@ -120,8 +126,8 @@ namespace QuickProject.Logic
 
         public static void TriggerConfirmDeposit(ConfirmDeposit confirmObj)
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}", "ConfirmDeposit.TriggerConfirmDeposit()"));
+            string szTxt = string.Format("> {0}", "ConfirmDeposit.TriggerConfirmDeposit()");
+            MainProcess.log.AppendLog(szTxt);
             bool bNotFoundIban = false;
             try
             {
@@ -176,7 +182,8 @@ namespace QuickProject.Logic
                 szTxt = string.Format("{0}] EX:[{1}]", "CreateUsr.Create()", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-            MainProcess.log.AppendLog(string.Format("< {0}", "CreateUsr.Create() [{1}]", bNotFoundIban.ToString()));
+            szTxt = string.Format("< {0}", "CreateUsr.Create() [{1}]", bNotFoundIban.ToString());
+            MainProcess.log.AppendLog(szTxt);
         }
     }
     public class DepositAmount
