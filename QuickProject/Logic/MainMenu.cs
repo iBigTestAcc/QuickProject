@@ -186,7 +186,7 @@ namespace QuickProject.Logic
                 {
                     bInProcess = IOandVer.GetIBAN(ref szDestIban, "Destination account");
                 }
-                bInProcess = IOandVer.GetAmount(ref szAmount, bInProcess);
+                bInProcess = IOandVer.GetAmount(ref szAmount, bInProcess, TrxType.Transfer);
 
                 if (bInProcess)
                 {
@@ -253,7 +253,7 @@ namespace QuickProject.Logic
             try
             {
                 bInProcess = IOandVer.GetIBAN(ref szIban, "Deposit");
-                bInProcess = IOandVer.GetAmount(ref szAmiunt, bInProcess);
+                bInProcess = IOandVer.GetAmount(ref szAmiunt, bInProcess, TrxType.Deposit);
 
                 if (bInProcess)
                 {

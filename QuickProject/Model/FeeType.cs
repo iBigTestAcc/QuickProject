@@ -49,10 +49,10 @@ namespace QuickProject.Model
         }
         public static List<FeeType> GetFee(TrxType transactionType)
         {
-            string szTxt = string.Empty;
+            string szTxt = string.Format("> {0}({1})", "GetFee", transactionType);
             bool bDone = false;
             List<FeeType> feeList = new List<FeeType>();
-            MainProcess.log.AppendLog(string.Format("> {0}({1})", "GetFee", transactionType));
+            MainProcess.log.AppendLog(szTxt);
 
             try
             {
@@ -79,8 +79,8 @@ namespace QuickProject.Model
                 szTxt = string.Format("{0}] EX:[{1}]", "GetFee", ex.Message);
                 MainProcess.log.AppendLog(szTxt);
             }
-
-            MainProcess.log.AppendLog(string.Format("< {0}({1}) [{2}]", "GetFee", transactionType, bDone.ToString()));
+            szTxt = string.Format("< {0}({1}) [{2}]", "GetFee", transactionType, bDone.ToString());
+            MainProcess.log.AppendLog(szTxt);
 
             return feeList;
         }

@@ -31,8 +31,8 @@ namespace QuickProject.Model
 
         public static CreateUsrHistory InsertCreateUsrHistory(CreateUsrHistory createObj)
         {
-            string szTxt = string.Empty;
-            MainProcess.log.AppendLog(string.Format("> {0}('{1}')", "InsertCreateUsrHistory", createObj.Id));
+            string szTxt = string.Format("> {0}('{1}')", "InsertCreateUsrHistory", createObj.Id);
+            MainProcess.log.AppendLog(szTxt);
             try
             {
                 MainProcess.sql.database.InsertWithChildren(createObj);
