@@ -70,12 +70,15 @@ namespace QuickProject.Logic
                 // valid amount
                 if (verResult == IOandVer.VerifyResult.OK)
                 {
-                    verResult = IOandVer.VerifyAmount(szAmount);
-                    // get fee
-                    tranAmount = VerFeeAmount(szAmount);
-                    if(tranAmount == null)
+                    verResult = IOandVer.VerifyAmount(szAmount, TrxType.Transfer);
+                    if (verResult == VerifyResult.OK)
                     {
-                        verResult = VerifyResult.InternalFeeError;
+                        // get fee
+                        tranAmount = VerFeeAmount(szAmount);
+                        if (tranAmount == null)
+                        {
+                            verResult = VerifyResult.InternalFeeError;
+                        }
                     }
                 }
 

@@ -10,6 +10,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using static QuickProject.Util.IOandVer;
 using System.Security.Policy;
+using System.Text.RegularExpressions;
+using System.Data.SqlTypes;
 
 namespace QuickProject.Util
 {
@@ -54,6 +56,12 @@ namespace QuickProject.Util
             InternalFeeError,
             [DescriptionAttribute("Current account balance is not enough for transfer.")]
             NotEnoughBalance,
+            [DescriptionAttribute("Wrong deposit amount. Support maximun[{0}] minimum[{1}] with 2 point decimal digit")]
+            WrongDepositAmount,
+            [DescriptionAttribute("Wrong Tranfer amount. Support maximun[{0}] minimum[{1}] with 2 point decimal digit")]
+            WrongTranferAmount,
+            [DescriptionAttribute("Wrong amount enter. Support 2 point decimal digit")]
+            WrongAmount,
             [DescriptionAttribute("Internal Error.")]
             Else,
             [DescriptionAttribute("Internal Error.")]
@@ -90,7 +98,7 @@ namespace QuickProject.Util
             return bRet;
         }
 
-        public static bool GetAmount(ref string szAmount, bool bInProcess)
+        public static bool GetAmount(ref string szAmount, bool bInProcess, TrxType trxType)
         {
             bool iAmountOk = false;
             while (bInProcess && !iAmountOk)
@@ -102,11 +110,16 @@ namespace QuickProject.Util
                 }
                 else
                 {
-                    var verResult = IOandVer.VerifyAmount(szAmount);
+                    var verResult = IOandVer.VerifyAmount(szAmount, trxType);
                     if (verResult == IOandVer.VerifyResult.OK)
                     {
                         iAmountOk = true;
                     }
+                    else
+                    {
+                        IOandVer.DisplayVerifyError(verResult);
+                    }
+
                 }
             }
             return iAmountOk;
@@ -129,6 +142,22 @@ namespace QuickProject.Util
             return szInBan;
         }
 
+        public static string GetAmount2Digit()
+        {
+            string szTxt = string.Empty;
+            string szInAmount = string.Empty;
+            try
+            {
+                Console.Write("Enter Amount, [X] for exit:");
+                szInAmount = Console.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                szTxt = string.Format("{0}] EX:[{1}]", "GetAmount", ex.Message);
+                MainProcess.log.AppendLog(szTxt);
+            }
+            return szInAmount;
+        }
         public static string GetAmount()
         {
             string szTxt = string.Empty;
@@ -137,6 +166,12 @@ namespace QuickProject.Util
             {
                 Console.Write("Enter Amount, [X] for exit:");
                 szInAmount = Console.ReadLine();
+                double val = 0;
+                if(double.TryParse(szInAmount, out val))
+                {
+                    szInAmount = val.ToString("0.00");
+                }
+
             }
             catch (Exception ex)
             {
@@ -172,7 +207,7 @@ namespace QuickProject.Util
             return bReturn;
         }
 
-        public static VerifyResult VerifyAmount(string szAmount)
+        public static VerifyResult VerifyAmount(string szAmount, TrxType trxType)
         {
             VerifyResult bReturn = VerifyResult.Error;
             string szTxt = string.Empty;
@@ -182,14 +217,45 @@ namespace QuickProject.Util
                 // else ?
                 double dResult = 0.0;
 
-                if (double.TryParse(szAmount, out dResult))
+                var regex = new Regex(@"^\d+\.\d{2}?$"); // ^\d+(\.|\,)\d{2}?$ use this incase your dec separator can be comma or decimal.
+                var flg = regex.IsMatch(szAmount);
+                if (flg)
                 {
-                    bReturn = VerifyResult.OK;
+                    if (double.TryParse(szAmount, out dResult))
+                    {
+                        if (trxType == TrxType.Deposit)
+                        {
+                            // check min max for dep amount
+                            if (dResult > Properties.Settings.Default.dMaxDepAmount || dResult < Properties.Settings.Default.dMinDepAmount)
+                            {
+                                bReturn = VerifyResult.WrongDepositAmount;
+                            }
+                            else
+                            {
+                                bReturn = VerifyResult.OK;
+                            }
+                        }
+                        else
+                        {
+                            // check min for trans
+                            if (dResult > Properties.Settings.Default.dMaxTransferAmount || dResult < Properties.Settings.Default.dMinTransferAmount)
+                            {
+                                bReturn = VerifyResult.WrongTranferAmount;
+                            }
+                            else
+                            {
+                                bReturn = VerifyResult.OK;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        bReturn = VerifyResult.WrongAmount;
+                    }
                 }
                 else
                 {
-                    bReturn = VerifyResult.WrongFormat;
-                    DisplayVerifyError(bReturn);
+                    bReturn = VerifyResult.WrongAmount;
                 }
             }
             catch (Exception ex)
@@ -254,7 +320,21 @@ namespace QuickProject.Util
         {
             string szTxt = string.Empty;
 
-            szTxt = string.Format(VerifyResultEnum.ToDescriptionString(result));
+
+            switch(result)
+            {
+                case VerifyResult.WrongDepositAmount:
+                    szTxt = String.Format(VerifyResultEnum.ToDescriptionString(result), Properties.Settings.Default.dMaxDepAmount, Properties.Settings.Default.dMinDepAmount);
+                break;
+
+                case VerifyResult.WrongTranferAmount:
+                    szTxt = String.Format(VerifyResultEnum.ToDescriptionString(result), Properties.Settings.Default.dMaxTransferAmount, Properties.Settings.Default.dMinTransferAmount);
+                    break;
+
+                default:
+                    szTxt = string.Format(VerifyResultEnum.ToDescriptionString(result));
+                break;
+            }
             MainProcess.log.AppendLog(string.Format(szTxt), true);
 
         }

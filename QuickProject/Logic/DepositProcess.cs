@@ -35,10 +35,8 @@ namespace QuickProject.Logic
                     if(fee.Type == FeeEnum.ToDescriptionString(Fee.Percent))
                     {
                         feeAmount = (fee.FeeAmount * dAmount) / 100;
-                        // Normally use only 2 decimal digit.
-                        // but not in spec
-                        //string floor = string.Format("{0:0.00}", feeAmount);
-                        //feeAmount = feeAmount;
+                        string floor = string.Format("{0:0.00}", feeAmount);
+                        feeAmount = double.Parse(floor);
                     }
 
                     returnObj = new DepositAmount();
