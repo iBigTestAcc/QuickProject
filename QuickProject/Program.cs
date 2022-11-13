@@ -11,13 +11,20 @@ using System.Threading.Tasks;
 
 namespace QuickProject
 {
-    internal class MainProcess
+    public class MainProcess
     {
         public static string szNlogConfigPath { get; set; }
         public static string szNlogPath { get; set; }
 
         public static LogEvents log = null;
         public static SqlHandle sql = null;
+
+        // for test
+        public static double dMaxDepAmount = Properties.Settings.Default.dMaxDepAmount;
+        public static double dMinDepAmount = Properties.Settings.Default.dMinDepAmount;
+        public static double dMaxTransAmount = Properties.Settings.Default.dMaxTransferAmount;
+        public static double dMinTransAmount = Properties.Settings.Default.dMinTransferAmount;
+
         static void Main(string[] args)
         {
             try
@@ -36,7 +43,7 @@ namespace QuickProject
 
         }
 
-        static void Init()
+        public static void Init()
         {
             try
             {
@@ -49,6 +56,7 @@ namespace QuickProject
                 szNlogConfigPath = (@".\Util\nLogConfig.xml");
                 log = new LogEvents(szNlogPath);
                 #endregion nLog
+
 
             }
             catch (Exception ex)

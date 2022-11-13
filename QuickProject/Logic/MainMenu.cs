@@ -30,15 +30,16 @@ namespace QuickProject.Logic
                     Console.WriteLine("Backend");
                     Console.WriteLine("\t1. Create token --> if have time will move all this logic to web API with token authen");
                     Console.WriteLine("\t2. Create Account");
-                    Console.WriteLine("\t\t20. View all User");
-                    Console.WriteLine("\t\t21. View all Profile");
-                    Console.WriteLine("\t\t22. View all History");
-                    Console.WriteLine("\t\t\t220. View all CreateUsrRecord");
-                    Console.WriteLine("\t\t\t221. View all DepositRecord");
-                    Console.WriteLine("\t\t\t222. View all TransferRecord");
                     Console.WriteLine("\t3. Depoist");
-                    Console.WriteLine("\t\t30. View all Acc balance");
                     Console.WriteLine("\t4. Transfer");
+                    Console.WriteLine("\tView Record");
+                    Console.WriteLine("\t\t50. View all User");
+                    Console.WriteLine("\t\t51. View all Profile");
+                    Console.WriteLine("\t\t\t510. View all Acc balance");
+                    Console.WriteLine("\t\t52. View all History");
+                    Console.WriteLine("\t\t\t520. View all CreateUsrRecord");
+                    Console.WriteLine("\t\t\t521. View all DepositRecord");
+                    Console.WriteLine("\t\t\t522. View all TransferRecord");
                     Console.WriteLine("\tX. Exit");
 
                     Console.Write("Enter number:");
@@ -70,61 +71,9 @@ namespace QuickProject.Logic
                         
                         break;
 
-                    case "20":
-                        User.DisplayAllUser();
-
-                        break;
-
-                    case "21":
-                        UserProfile.DisplayAllUserProfile();
-                        break;
-
-                    case "22":
-
-                        var tranHis = MainProcess.sql.database.Query<TransactionHistory>("select * from TransactionHistory");
-                        foreach (var item in tranHis)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] TransferId[{1}] DepositId[[{2}] CreateUsrId[{3}] Type[{4}] DateTime[{5}]",
-                                item.Id, item.TransferId, item.DepositId, item.CreateUsrId, item.Type, item.DateTime));
-                        }
-                        break;
-
-                    case "220":
-                        var createusrHis = MainProcess.sql.database.Query<CreateUsrHistory>("select * from CreateUsrHistory");
-                        foreach (var item in createusrHis)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] UserId[{1}] UsrProfileId[[{2}] AccBalanceId[{3}] CreateDateTime[{4}]",
-                                item.Id, item.UserId, item.UserProfileId, item.AccBalanceId, item.DateTime));
-                        }
-                        break;
-                    case "221":
-                        var depHis = MainProcess.sql.database.Query<DepositHistroy>("select * from DepositHistroy");
-                        foreach (var item in depHis)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] UserProfileId[[{2}] Amount[{3}] DateTime[{4}]",
-                                item.Id, item.UserIban, item.UserProfileId, item.Amount, item.DateTime));
-                        }
-                        break;
-
-                    case "222":
-                        var trnsHis = MainProcess.sql.database.Query<TransferHistory>("select * from TransferHistory");
-                        foreach (var item in trnsHis)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] From[{1}] To[[{2}] Amount[{3}] NetAmount[{4}] DateTime[{5}]",
-                                item.Id, item.From, item.To, item.Amount, item.NetAmount, item.DateTime));
-                        }
-                        break;
+                    
                     case "3":
                         ProcessDeposit();
-                        break;
-
-                    case "30":
-                        var acc = MainProcess.sql.database.Query<AccBalance>("select * from AccBalance");
-                        foreach (var item in acc)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] Balance[[{2}]",
-                                item.Id, item.UserIban, item.Balance));
-                        }
                         break;
 
                     case "4":
@@ -139,22 +88,88 @@ namespace QuickProject.Logic
                         ProcessTransfer();
 
                         break;
-
-                    case "999":
-                        //var fee = new FeeType
-                        //{
-                        //    FeeAmount = 0,
-                        //    Type = FeeEnum.ToDescriptionString(Fee.Amount)
-                        //};
-                        //MainProcess.sql.database.Insert(fee);
-                        //MainProcess.sql.database.DropTable<TransferHistory>();
-                        //MainProcess.sql.database.CreateTable<TransferHistory>();
-
-                        //var tmp = MainProcess.sql.database.Query<TransferHistory>("select * from TransferHistory");
-
-                        //var asdf = 0;
+                    case "50":
+                        Console.WriteLine("50. View all User");
+                        User.DisplayAllUser();
 
                         break;
+
+                    case "51":
+                        Console.WriteLine("51. View all Profile");
+                        UserProfile.DisplayAllUserProfile();
+                        break;
+
+                    case "510":
+                        var acc = MainProcess.sql.database.Query<AccBalance>("select * from AccBalance");
+                        Console.WriteLine(string.Format("510. View all Acc balance Total[{0}]", acc.Count));
+
+                        foreach (var item in acc)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] Balance[[{2}]",
+                                item.Id, item.UserIban, item.Balance));
+                        }
+                        break;
+
+                    case "52":
+                        var tranHis = MainProcess.sql.database.Query<TransactionHistory>("select * from TransactionHistory");
+                        Console.WriteLine(string.Format("View all History Total[{0}]", tranHis.Count));
+
+                        foreach (var item in tranHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] TransferId[{1}] DepositId[[{2}] CreateUsrId[{3}] Type[{4}] DateTime[{5}]",
+                                item.Id, item.TransferId, item.DepositId, item.CreateUsrId, item.Type, item.DateTime));
+                        }
+                        break;
+
+                    case "520":
+                        var createusrHis = MainProcess.sql.database.Query<CreateUsrHistory>("select * from CreateUsrHistory");
+                        Console.WriteLine(string.Format("520. View all CreateUsrRecord Total[{0}]", createusrHis.Count));
+
+                        foreach (var item in createusrHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] UserId[{1}] UsrProfileId[[{2}] AccBalanceId[{3}] CreateDateTime[{4}]",
+                                item.Id, item.UserId, item.UserProfileId, item.AccBalanceId, item.DateTime));
+                        }
+                        break;
+                    case "521":
+                        var depHis = MainProcess.sql.database.Query<DepositHistroy>("select * from DepositHistroy");
+                        Console.WriteLine(string.Format("521. View all DepositRecord Total[{0}]", depHis.Count));
+
+                        foreach (var item in depHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] UserProfileId[[{2}] Amount[{3}] NetAmount[{4}] DateTime[{5}]",
+                                item.Id, item.UserIban, item.UserProfileId, item.Amount, item.NetAmount, item.DateTime));
+                        }
+                        break;
+
+                    case "522":
+                        var trnsHis = MainProcess.sql.database.Query<TransferHistory>("select * from TransferHistory");
+                        Console.WriteLine(string.Format("522. View all TransferRecord Total[{0}]", trnsHis.Count));
+                        foreach (var item in trnsHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] From[{1}] To[[{2}] Amount[{3}] NetAmount[{4}] DateTime[{5}]",
+                                item.Id, item.From, item.To, item.Amount, item.NetAmount, item.DateTime));
+                        }
+                        break;
+                    //case "999":
+
+                    //    string szInput = "TH78RABO86948668011";
+                    //    Console.SetIn(new System.IO.StringReader(szInput));
+
+                    //    //var fee = new FeeType
+                    //    //{
+                    //    //    FeeAmount = 0,
+                    //    //    Type = FeeEnum.ToDescriptionString(Fee.Amount)
+                    //    //};
+                    //    //MainProcess.sql.database.Insert(fee);
+                    //    //MainProcess.sql.database.DropTable<TransferHistory>();
+                    //    //MainProcess.sql.database.CreateTable<TransferHistory>();
+
+                    //    //var tmp = MainProcess.sql.database.Query<TransferHistory>("select * from TransferHistory");
+
+                    //    //var asdf = 0;
+
+                    //    break;
                     default:
                         // unknow. do nothing
                         break;

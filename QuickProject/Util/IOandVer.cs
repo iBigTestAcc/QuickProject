@@ -118,6 +118,7 @@ namespace QuickProject.Util
                     else
                     {
                         IOandVer.DisplayVerifyError(verResult);
+                        bInProcess = false;
                     }
 
                 }
@@ -166,12 +167,18 @@ namespace QuickProject.Util
             {
                 Console.Write("Enter Amount, [X] for exit:");
                 szInAmount = Console.ReadLine();
-                decimal val = 0;
-                if(decimal.TryParse(szInAmount, out val))
+                if (!string.IsNullOrEmpty(szInAmount))
                 {
-                    szInAmount = val.ToString("0.00");
+                    decimal val = 0;
+                    if (decimal.TryParse(szInAmount, out val))
+                    {
+                        szInAmount = val.ToString("0.00");
+                    }
                 }
-
+                else
+                {
+                    szInAmount = "0.00";
+                }
             }
             catch (Exception ex)
             {
