@@ -34,6 +34,10 @@ namespace QuickProject
                 string Path = string.Format(@"{0}\{1}",Environment.CurrentDirectory, @"DB\TestDB.sqlite");
                 if (!File.Exists(Path))
                 {
+                    if(!Directory.Exists(string.Format(@"{0}\{1}", Environment.CurrentDirectory, @"DB")))
+                    {
+                        Directory.CreateDirectory(string.Format(@"{0}\{1}", Environment.CurrentDirectory, @"DB"));
+                    }
                     MainProcess.log.AppendLog("Database not found First time setting.", true);
                     CreateDB(Path);
                 }

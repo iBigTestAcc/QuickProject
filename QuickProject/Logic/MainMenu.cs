@@ -33,6 +33,9 @@ namespace QuickProject.Logic
                     Console.WriteLine("\t\t20. View all User");
                     Console.WriteLine("\t\t21. View all Profile");
                     Console.WriteLine("\t\t22. View all History");
+                    Console.WriteLine("\t\t\t220. View all CreateUsrRecord");
+                    Console.WriteLine("\t\t\t221. View all DepositRecord");
+                    Console.WriteLine("\t\t\t222. View all TransferRecord");
                     Console.WriteLine("\t3. Depoist");
                     Console.WriteLine("\t\t30. View all Acc balance");
                     Console.WriteLine("\t4. Transfer");
@@ -78,13 +81,6 @@ namespace QuickProject.Logic
 
                     case "22":
 
-                        var usrHis = MainProcess.sql.database.Query<CreateUsrHistory>("select * from CreateUsrHistory");
-                        foreach(var item in usrHis)
-                        {
-                            Console.WriteLine(string.Format("id[{0}] UserId[{1}] UsrProfileId[[{2}] AccBalanceId[{3}] CreateDateTime[{4}]", 
-                                item.Id, item.UserId, item.UserProfileId, item.AccBalanceId, item.DateTime));
-                        }
-
                         var tranHis = MainProcess.sql.database.Query<TransactionHistory>("select * from TransactionHistory");
                         foreach (var item in tranHis)
                         {
@@ -93,9 +89,32 @@ namespace QuickProject.Logic
                         }
                         break;
 
+                    case "220":
+                        var createusrHis = MainProcess.sql.database.Query<CreateUsrHistory>("select * from CreateUsrHistory");
+                        foreach (var item in createusrHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] UserId[{1}] UsrProfileId[[{2}] AccBalanceId[{3}] CreateDateTime[{4}]",
+                                item.Id, item.UserId, item.UserProfileId, item.AccBalanceId, item.DateTime));
+                        }
+                        break;
+                    case "221":
+                        var depHis = MainProcess.sql.database.Query<DepositHistroy>("select * from DepositHistroy");
+                        foreach (var item in depHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] UserIban[{1}] UserProfileId[[{2}] Amount[{3}] DateTime[{4}]",
+                                item.Id, item.UserIban, item.UserProfileId, item.Amount, item.DateTime));
+                        }
+                        break;
+
+                    case "222":
+                        var trnsHis = MainProcess.sql.database.Query<TransferHistory>("select * from TransferHistory");
+                        foreach (var item in trnsHis)
+                        {
+                            Console.WriteLine(string.Format("id[{0}] From[{1}] To[[{2}] Amount[{3}] NetAmount[{4}] DateTime[{5}]",
+                                item.Id, item.From, item.To, item.Amount, item.NetAmount, item.DateTime));
+                        }
+                        break;
                     case "3":
-                        // 20221113
-                        // todo: limit deposit amount with 2 digit decimal point
                         ProcessDeposit();
                         break;
 
